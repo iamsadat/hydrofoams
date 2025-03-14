@@ -2,9 +2,10 @@
   "compilerOptions": {
     "target": "es2015",
     "lib": ["dom", "dom.iterable", "esnext"],
+    "types": ["node", "react", "react-dom"], // Add this line
     "downlevelIteration": true,
     "allowJs": true,
-    "skipLibCheck": true,
+    "skipLibCheck": false, // Change to false for better type checking
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
