@@ -7,15 +7,15 @@ export function middleware(request: NextRequest) {
   const path = url.pathname;
 
   // If request is from the main domain (x.com or www.x.com)
-  if (host === 'x.com' || host === 'www.x.com') {
+  if (host === 'fdkhan.com' || host === 'www.fdkhan.com') {
     if (path.startsWith('/search/')) {
       const clientSlug = path.split('/')[2]; // Extract client name
-      return NextResponse.redirect(`http://${clientSlug}.x.com:3000`);
+      return NextResponse.redirect(`http://${clientSlug}.fdkhan.com:3000`);
     }
   }
 
   // If the request is from a subdomain (client.x.com)
-  if (host.endsWith('.x.com')) {
+  if (host.endsWith('.fdkhan.com')) {
     const clientSlug = host.split('.')[0]; // Extract client name
 
     // Rewrite `/product/{handle}` paths to include the subdomain

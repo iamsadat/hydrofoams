@@ -1,3 +1,5 @@
+import Footer from "components/layout/footer";
+
 // app/clients/page.tsx
 export default function ClientsPage() {
     const dummyClients = [
@@ -9,7 +11,8 @@ export default function ClientsPage() {
       ];
   
     return (
-      <div className="container mx-auto p-8">
+      <div>
+      <div className="container mx-auto p-16">
         <h1 className="text-4xl font-bold mb-8 text-[#0A4A3C]">Our Clients</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {dummyClients.map((client) => (
@@ -31,6 +34,8 @@ export default function ClientsPage() {
           ))}
         </div>
     
+      </div>
+      <Footer />
       </div>
     );
   }
