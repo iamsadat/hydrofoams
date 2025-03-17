@@ -15,7 +15,7 @@ export default function ClientsPage() {
           {dummyClients.map((client) => (
              <a
              key={client.slug}
-             href={`/clients/${client.slug}`}
+             href={`/search/${client.slug}`}
              className="border border-[#0A4A3C]/10 rounded-lg p-6 hover:shadow-lg transition-all duration-200 hover:-translate-y-1"
            >
               <div className="flex flex-col items-center">

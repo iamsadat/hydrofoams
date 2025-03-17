@@ -10,7 +10,7 @@ export default function ClientsShowcase() {
             Explore our network of prestigious institutions and schools that trust us for their uniform and fabric needs.
           </p>
           <a 
-            href="/clients" 
+            href="/search" 
             className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-[#0A4A3C] hover:bg-[#0A4A3C]/90 transition-colors duration-200 hover:shadow-lg"
           >
             View Our Clients

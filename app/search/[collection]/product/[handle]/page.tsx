@@ -2,9 +2,13 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
 import { GridTileImage } from 'components/grid/tile';
+import { Gallery } from 'components/product/gallery';
+import { ProductProvider } from 'components/product/product-context';
+import { ProductDescription } from 'components/product/product-description';
 import { HIDDEN_PRODUCT_TAG } from 'lib/constants';
 import { getProduct, getProductRecommendations } from 'lib/shopify';
 import Link from 'next/link';
+import { Suspense } from 'react';
 
 export async function generateMetadata({ params }: { params: { handle: string } }): Promise<Metadata> {
   const product = await getProduct(params.handle);
@@ -45,47 +49,57 @@ export default async function ProductPage({ params }: { params: { handle: string
 
   if (!product) return notFound();
 
+  const productJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.title,
+    description: product.description,
+    image: product.featuredImage.url,
+    offers: {
+      '@type': 'AggregateOffer',
+      availability: product.availableForSale
+        ? 'https://schema.org/InStock'
+        : 'https://schema.org/OutOfStock',
+      priceCurrency: product.priceRange.minVariantPrice.currencyCode,
+      highPrice: product.priceRange.maxVariantPrice.amount,
+      lowPrice: product.priceRange.minVariantPrice.amount
+    }
+  };
+
   return (
-    <div className="container mx-auto p-8">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-        <div className="rounded-lg overflow-hidden shadow-lg">
-          <img
-            src={product.featuredImage?.url || '/images/placeholder.jpg'}
-            alt={product.title}
-            className="w-full h-auto object-cover"
-          />
-        </div>
-        <div className="space-y-6">
-          <h1 className="text-4xl font-bold text-[#0A4A3C]">{product.title}</h1>
-          <div className="border-b border-[#0A4A3C]/10 pb-6">
-            <p className="text-lg text-[#0A4A3C]/80">{product.description}</p>
+    <ProductProvider>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(productJsonLd)
+        }}
+      />
+    <div className="mx-auto max-w-(--breakpoint-2xl) px-4">
+      <div className="flex flex-col rounded-lg border border-neutral-200 text-[#0A4A3C] p-8 md:p-12 lg:flex-row lg:gap-8 dark:border-neutral-800">
+      <div className="h-full w-full basis-full lg:basis-4/6">
+            <Suspense
+              fallback={
+                <div className="relative aspect-square h-full max-h-[550px] w-full overflow-hidden" />
+              }
+            >
+              <Gallery
+                images={product.images.slice(0, 5).map((image: Image) => ({
+                  src: image.url,
+                  altText: image.altText
+                }))}
+              />
+            </Suspense>
           </div>
-          <div className="flex items-center justify-between py-4">
-            <span className="text-3xl font-bold text-[#0A4A3C]">
-              ${product.priceRange?.minVariantPrice?.amount || '0.00'}
-            </span>
-            <button className="bg-[#0A4A3C] text-white px-8 py-3 rounded-md hover:bg-[#0A4A3C]/90 transition-colors duration-200 hover:shadow-lg">
-              Add to Cart
-            </button>
+          <div className="basis-full lg:basis-2/6">
+            <Suspense fallback={null}>
+              <ProductDescription product={product} />
+            </Suspense>
           </div>
-          {product.tags && product.tags.length > 0 && (
-            <div className="pt-6">
-              <h3 className="text-sm font-medium text-[#0A4A3C] mb-3">Tags:</h3>
-              <div className="flex flex-wrap gap-2">
-                {product.tags.map((tag: string) => (
-                  <span 
-                    key={tag}
-                    className="px-3 py-1 text-sm bg-[#0A4A3C]/5 text-[#0A4A3C] rounded-full"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
+          </div>
+          {/* <RelatedProducts id={product.id} /> */}
       </div>
-    </div>
+        
+    </ProductProvider>
   );
 }
 

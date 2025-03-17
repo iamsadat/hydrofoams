@@ -1,9 +1,9 @@
 'use client';
 
 import CartModal from 'components/cart/modal';
-import LogoSquare from 'components/logo-square';
 import { getMenuAction } from 'lib/shopify/actions';
 import { Menu } from 'lib/shopify/types';
+import Image from 'next/image';
 import Link from 'next/link';
 import { Suspense, useEffect, useState } from 'react';
 import MobileMenu from './mobile-menu';
@@ -26,7 +26,7 @@ export default function Navbar() {
   const [menu, setMenu] = useState<Menu[]>([]);
   const [hostname, setHostname] = useState('');
   const formattedSubdomain = formatSubdomain(hostname);
-  const displayName = formattedSubdomain ? `${formattedSubdomain}` : SITE_NAME;
+  const displayName = formattedSubdomain ? `${formattedSubdomain}` : "";
 
   useEffect(() => {
     const fetchMenu = async () => {
@@ -46,13 +46,19 @@ export default function Navbar() {
         </Suspense>
       </div>
       <div className="flex w-full items-center">
-        <div className="flex w-full md:w-1/3">
+        <div className="flex w-full md:w-1/3 h-full">
           <Link
             href="/"
             prefetch={true}
             className="mr-2 flex w-full items-center justify-center md:w-auto lg:mr-6"
           >
-            <LogoSquare />
+            <Image
+          src="/images/fdk-logo.jpg"
+          alt="FDK Logo"
+          width={100}  // Adjust as needed
+          height={200}   // Adjust as needed
+          priority
+        />
             <div className="ml-2 flex-none text-sm font-medium uppercase md:hidden lg:block">
               {displayName}
             </div>

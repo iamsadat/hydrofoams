@@ -8,7 +8,7 @@ export function middleware(request: NextRequest) {
 
   // If request is from the main domain (x.com or www.x.com)
   if (host === 'x.com' || host === 'www.x.com') {
-    if (path.startsWith('/clients/')) {
+    if (path.startsWith('/search/')) {
       const clientSlug = path.split('/')[2]; // Extract client name
       return NextResponse.redirect(`http://${clientSlug}.x.com:3000`);
     }
@@ -16,14 +16,17 @@ export function middleware(request: NextRequest) {
 
   // If the request is from a subdomain (client.x.com)
   if (host.endsWith('.x.com')) {
-    const clientSlug = host.split('.')[0]; // Extract subdomain as clientSlug
+    const clientSlug = host.split('.')[0]; // Extract client name
 
-    // Rewrite the request to the internal route `/clients/[clientSlug]`
-    url.pathname = `/clients/${clientSlug}`;
+    // Rewrite `/product/{handle}` paths to include the subdomain
+    if (path.startsWith('/product/')) {
+      url.pathname = `/search/${clientSlug}${path}`;
+      return NextResponse.rewrite(url);
+    }
 
-    const response = NextResponse.rewrite(url);
-    // response.headers.set('x-client-slug', clientSlug); // Attach subdomain info in headers if needed
-    return response;
+    // Default rewrite for subdomains
+    url.pathname = `/search/${clientSlug}${path}`;
+    return NextResponse.rewrite(url);
   }
 
   return NextResponse.next(); // Allow normal processing for other routes
@@ -31,7 +34,7 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/clients/:path*', // Match client paths
+    '/search/:path*', // Match client paths
     '/((?!_next/static|_next/image|favicon.ico).*)', // Ignore static assets
   ],
 };

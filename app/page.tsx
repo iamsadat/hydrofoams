@@ -1,4 +1,3 @@
-import { Carousel } from 'components/carousel';
 import ClientsShowcase from 'components/clients-showcase';
 import { ThreeItemGrid } from 'components/grid/three-items';
 import Footer from 'components/layout/footer';
@@ -15,7 +14,7 @@ export default function HomePage() {
   return (
     <>
       <ThreeItemGrid />
-      <Carousel />
+      {/* <Carousel /> */}
       <ClientsShowcase />
       <Footer />
     </>
