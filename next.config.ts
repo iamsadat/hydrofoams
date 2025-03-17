@@ -17,8 +17,33 @@ export default {
     ],
     domains: ['cdn.shopify.com']
   },
-  async rewrites() {
+  
+};
+
+
+/*
+async rewrites() {
     return [
+      {
+        source: '/',
+        has: [
+          {
+            type: 'host',
+            value: '(?<clientSlug>.*).x.com',
+          },
+        ],
+        destination: '/clients/:clientSlug',
+      },
+      {
+        source: '/product/:handle',
+        has: [
+          {
+            type: 'host',
+            value: '(?<clientSlug>.*).x.com',
+          },
+        ],
+        destination: '/clients/:clientSlug/products/:handle',
+      },
       {
         source: '/:path*',
         has: [
@@ -27,8 +52,9 @@ export default {
             value: '(?<clientSlug>.*).x.com',
           },
         ],
-        destination: '/:clientSlug/:path*',
+        destination: '/clients/:clientSlug/:path*',
       },
     ];
   },
-};
+
+  */

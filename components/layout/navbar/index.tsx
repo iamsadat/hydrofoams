@@ -1,19 +1,45 @@
+'use client';
+
 import CartModal from 'components/cart/modal';
 import LogoSquare from 'components/logo-square';
-import { getMenu } from 'lib/shopify';
+import { getMenuAction } from 'lib/shopify/actions';
 import { Menu } from 'lib/shopify/types';
 import Link from 'next/link';
-import { Suspense } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import MobileMenu from './mobile-menu';
 import Search, { SearchSkeleton } from './search';
 
 const { SITE_NAME } = process.env;
 
-export async function Navbar() {
-  const menu = await getMenu('next-js-frontend-header-menu');
+function formatSubdomain(hostname: string) {
+  const subdomain = hostname.split('.')[0] || '';
+  if (subdomain === 'x' || subdomain === 'www' || subdomain === '') {
+    return '';
+  }
+  return subdomain
+    .split('-')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+}
+
+export default function Navbar() {
+  const [menu, setMenu] = useState<Menu[]>([]);
+  const [hostname, setHostname] = useState('');
+  const formattedSubdomain = formatSubdomain(hostname);
+  const displayName = formattedSubdomain ? `${formattedSubdomain}` : SITE_NAME;
+
+  useEffect(() => {
+    const fetchMenu = async () => {
+      const menuData = await getMenuAction();
+      setMenu(menuData);
+    };
+    
+    setHostname(window.location.hostname);
+    fetchMenu();
+  }, []);
 
   return (
-    <nav className="relative flex items-center justify-between p-4 lg:px-6">
+    <nav className="relative flex items-center justify-between p-4 lg:px-6 bg-[#0A4A3C] text-white">
       <div className="block flex-none md:hidden">
         <Suspense fallback={null}>
           <MobileMenu menu={menu} />
@@ -28,7 +54,7 @@ export async function Navbar() {
           >
             <LogoSquare />
             <div className="ml-2 flex-none text-sm font-medium uppercase md:hidden lg:block">
-              {SITE_NAME}
+              {displayName}
             </div>
           </Link>
           {menu.length ? (
@@ -38,7 +64,7 @@ export async function Navbar() {
                   <Link
                     href={item.path}
                     prefetch={true}
-                    className="text-neutral-500 underline-offset-4 hover:text-black hover:underline dark:text-neutral-400 dark:hover:text-neutral-300"
+                    className="text-white/80 hover:text-[#C5B358] transition-colors duration-200"
                   >
                     {item.title}
                   </Link>
